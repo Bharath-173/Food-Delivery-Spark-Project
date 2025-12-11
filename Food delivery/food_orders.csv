@@ -1,0 +1,11 @@
+order_id,user_id,restaurant,city,cuisine,order_amount,delivery_time_mins,rating
+1,U101,Empire,Bangalore,North Indian,450,32,4
+2,U102,Meghana Foods,Bangalore,South Indian,520,28,5
+3,U103,KFC,Mysore,Fast Food,300,40,3
+4,U104,Dominos,Chennai,Fast Food,420,35,4
+5,U101,Empire,Bangalore,North Indian,380,30,5
+6,U105,Burger King,Chennai,Fast Food,250,45,3
+7,U106,Hotel Shetty,Mysore,South Indian,200,25,4
+8,U102,Meghana Foods,Bangalore,South Indian,600,27,5
+9,U107,A2B,Chennai,South Indian,350,33,4
+10,U101,Empire,Bangalore,North Indian,500,29,5

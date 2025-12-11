@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Delivery Analysis Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .stat-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .badge-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ed8936;
+            color: white;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍔 Food Delivery Analysis Dashboard</h1>
+            <p>Comprehensive insights into your food delivery operations</p>
+        </div>
+
+        <div class="dashboard">
+            <!-- Orders Per City -->
+            <div class="card">
+                <h2>📊 Orders Per City</h2>
+                <div class="table-container">
+                    {% if orders_per_city %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>City</th>
+                                <th>Total Orders</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in orders_per_city %}
+                            <tr>
+                                <td><strong>{{ item.city }}</strong></td>
+                                <td><span class="badge badge-primary">{{ item.total_orders }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="no-data">No data available</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Average Order Amount Per City -->
+            <div class="card">
+                <h2>💰 Average Order Amount Per City</h2>
+                <div class="table-container">
+                    {% if avg_amount_city %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>City</th>
+                                <th>Avg Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in avg_amount_city %}
+                            <tr>
+                                <td><strong>{{ item.city }}</strong></td>
+                                <td><span class="badge badge-success">₹{{ "%.2f"|format(item.avg_order_amount) }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="no-data">No data available</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Average Delivery Time Per City -->
+            <div class="card">
+                <h2>⏱️ Average Delivery Time Per City</h2>
+                <div class="table-container">
+                    {% if avg_delivery_city %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>City</th>
+                                <th>Avg Time (mins)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in avg_delivery_city %}
+                            <tr>
+                                <td><strong>{{ item.city }}</strong></td>
+                                <td><span class="badge badge-warning">{{ "%.1f"|format(item.avg_delivery_time) }} mins</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="no-data">No data available</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Cuisine Popularity -->
+            <div class="card">
+                <h2>🍕 Cuisine Popularity</h2>
+                <div class="table-container">
+                    {% if cuisine_popularity %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cuisine</th>
+                                <th>Order Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cuisine_popularity %}
+                            <tr>
+                                <td><strong>{{ item.cuisine }}</strong></td>
+                                <td><span class="badge badge-primary">{{ item.order_count }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="no-data">No data available</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Top Restaurants -->
+            <div class="card">
+                <h2>🏆 Top 3 Restaurants by Revenue</h2>
+                <div class="table-container">
+                    {% if top_restaurants %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Restaurant</th>
+                                <th>Total Revenue (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in top_restaurants %}
+                            <tr>
+                                <td><strong>#{{ loop.index }}</strong></td>
+                                <td><strong>{{ item.restaurant }}</strong></td>
+                                <td><span class="badge badge-success">₹{{ item.total_revenue }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="no-data">No data available</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- High Value Customers -->
+            <div class="card">
+                <h2>👑 High Value Customers (Spent > ₹1000)</h2>
+                <div class="table-container">
+                    {% if high_value_customers %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Total Spent (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in high_value_customers %}
+                            <tr>
+                                <td><strong>{{ item.user_id }}</strong></td>
+                                <td><span class="badge badge-success">₹{{ item.total_spent }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="no-data">No high value customers found</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Raw Data -->
+            <div class="card full-width">
+                <h2>📋 All Orders Data</h2>
+                <div class="table-container">
+                    {% if raw_data %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>User ID</th>
+                                <th>Restaurant</th>
+                                <th>City</th>
+                                <th>Cuisine</th>
+                                <th>Amount (₹)</th>
+                                <th>Delivery Time (mins)</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in raw_data %}
+                            <tr>
+                                <td>{{ item.order_id }}</td>
+                                <td>{{ item.user_id }}</td>
+                                <td><strong>{{ item.restaurant }}</strong></td>
+                                <td>{{ item.city }}</td>
+                                <td>{{ item.cuisine }}</td>
+                                <td>₹{{ item.order_amount }}</td>
+                                <td>{{ item.delivery_time_mins }} mins</td>
+                                <td>
+                                    {% for i in range(item.rating) %}⭐{% endfor %}
+                                    ({{ item.rating }})
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="no-data">No data available</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
